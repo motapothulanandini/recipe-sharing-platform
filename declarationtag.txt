@@ -1,0 +1,22 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+    <h1>Welcome to calculator</h1>
+   <%! 
+      int res;
+      int myadd(int x,int y)
+      {
+    	  return x+y;
+      }
+   %>
+   <%
+     res = myadd(50,20);
+   %>
+   <h1><%="The sum is :"+res %></h1>
+   </body>
+</html>

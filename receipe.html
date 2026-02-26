@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Sharing Platform</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<style>
+/* Basic reset and layout styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+h1 {
+    color: #333;
+}
+
+.recipe-form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 40px;
+}
+
+.recipe-form input, .recipe-form textarea {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.recipe-form button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.recipe-form button:hover {
+    background-color: #45a049;
+}
+
+.recipe-list {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.recipe-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.recipe-list li {
+    background-color: #f9f9f9;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 4px;
+    text-align: left;
+}
+
+.recipe-list li h3 {
+    color: #4CAF50;
+}
+
+.recipe-list li p {
+    color: #555;
+}
+</style>
+<body>
+
+    <div class="container">
+        <h1>Recipe Sharing Platform</h1>
+
+        <div class="recipe-form">
+            <h2>Share Your Recipe</h2>
+            <form id="recipe-form">
+                <input type="text" id="recipe-name" placeholder="Recipe Name" required>
+                <input type="text" id="ingredients" placeholder="Ingredients (comma separated)" required>
+                <textarea id="cooking steps" placeholder="cooking steps" required></textarea>
+                <button type="submit">Submit Recipe</button>
+            </form>
+        </div>
+
+        <div class="recipe-list">
+            <h2>Shared Recipes</h2>
+            <ul id="recipe-list">
+                <!-- Recipes will be listed here -->
+            </ul>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+<script>
+/ Function to add a recipe to the list
+function addRecipe(event) {
+    event.preventDefault(); // Prevent page refresh on form submit
+
+    // Get values from form inputs
+    const recipeName = document.getElementById('recipe-name').value;
+    const ingredients = document.getElementById('ingredients').value;
+    const cooking steps= document.getElementById('cooking steps').value;
+
+    // Create a new recipe item
+    const recipeItem = document.createElement('li');
+    recipeItem.innerHTML = `
+        <h3>${recipeName}</h3>
+        <p><strong>Ingredients:</strong> ${ingredients}</p>
+        <p><strong>cooking steps:</strong> ${cooking steps}</p>
+    `;
+
+    // Append the new recipe item to the recipe list
+    const recipeList = document.getElementById('recipe-list');
+    recipeList.appendChild(recipeItem);
+
+    // Clear the form inputs
+    document.getElementById('recipe-name').value = '';
+    document.getElementById('ingredients').value = '';
+    document.getElementById('cooking steps').value = '';
+}
+
+// Add event listener to the form to handle the submit
+document.getElementById('recipe-form').addEventListener('submit', addRecipe);
+</script>
+
+</body>
+</html>

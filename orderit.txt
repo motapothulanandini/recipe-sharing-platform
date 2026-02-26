@@ -1,0 +1,110 @@
+#!/usr/bin/env python3
+import sys
+from collections import deque
+
+def read_input():
+    # Read all lines and handle blank lines as in the examples
+    lines = [ln.rstrip('\n') for ln in sys.stdin.read().splitlines()]
+    i = 0
+    # skip blanks until integer N found
+    while i < len(lines) and lines[i].strip() == "":
+        i += 1
+    if i >= len(lines):
+        raise ValueError("No input")
+    N = int(lines[i].strip()); i += 1
+
+    # find 'shuffled' marker
+    while i < len(lines) and lines[i].strip().lower() != "shuffled":
+        i += 1
+    if i >= len(lines):
+        raise ValueError("'shuffled' marker not found")
+    i += 1
+
+    # read next N non-empty lines as shuffled instructions
+    shuffled = []
+    while len(shuffled) < N and i < len(lines):
+        if lines[i] != "":
+            shuffled.append(lines[i])
+        i += 1
+    if len(shuffled) < N:
+        raise ValueError("Not enough shuffled instructions")
+
+    # find 'original' marker
+    while i < len(lines) and lines[i].strip().lower() != "original":
+        i += 1
+    if i >= len(lines):
+        raise ValueError("'original' marker not found")
+    i += 1
+
+    original = []
+    while len(original) < N and i < len(lines):
+        if lines[i] != "":
+            original.append(lines[i])
+        i += 1
+    if len(original) < N:
+        raise ValueError("Not enough original instructions")
+
+    return N, shuffled, original
+
+def neighbors(perm):
+    # generate permutations after moving any contiguous block to any other position
+    n = len(perm)
+    for i in range(n):
+        for j in range(i, n):
+            block = perm[i:j+1]
+            remainder = perm[:i] + perm[j+1:]
+            # insert block at any position in remainder (0..len(remainder))
+            for k in range(len(remainder)+1):
+                # inserting back at same place is a no-op:
+                # If k == i (original insertion pos in remainder), then it results same permutation.
+                if k == i:
+                    continue
+                new = remainder[:k] + block + remainder[k:]
+                yield tuple(new)
+
+def min_block_moves(start, target):
+    # bidirectional BFS
+    if start == target:
+        return 0
+    start_t = tuple(start)
+    target_t = tuple(target)
+    q1 = deque([start_t]); q2 = deque([target_t])
+    dist1 = {start_t: 0}; dist2 = {target_t: 0}
+    # Expand smaller frontier each step
+    while q1 and q2:
+        # choose side to expand
+        if len(q1) <= len(q2):
+            q = q1; dist_from = dist1; dist_other = dist2
+        else:
+            q = q2; dist_from = dist2; dist_other = dist1
+
+        for _ in range(len(q)):
+            cur = q.popleft()
+            dcur = dist_from[cur]
+            for nb in neighbors(list(cur)):
+                if nb in dist_from:
+                    continue
+                dist_from[nb] = dcur + 1
+                # If the other side has seen this, we've met in the middle
+                if nb in dist_other:
+                    return dist_from[nb] + dist_other[nb]
+                q.append(nb)
+    return -1  # should not happen for permutations
+
+def main():
+    N, shuffled, original = read_input()
+    # Map each original instruction to its index (0..N-1)
+    pos = {instr: idx for idx, instr in enumerate(original)}
+    # Create permutation of indices representing shuffled relative to original
+    try:
+        perm = [pos[s] for s in shuffled]
+    except KeyError as e:
+        print("0")  # defensive: if instruction missing, but per problem this shouldn't happen
+        return
+
+    target = list(range(N))
+    ans = min_block_moves(perm, target)
+    print(ans)
+
+if __name__ == "__main__":
+    main()
